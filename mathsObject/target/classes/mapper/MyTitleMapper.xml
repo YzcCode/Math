@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yzc.mapper.MyTitleMapper">
+
+
+    <select id="myTitle" resultMap="selectTitleMap" parameterType="int">
+        select m.m_id, u.user_id, t.title_id, m.state, t.title_category, t.title_type,
+               t.title_describes, t.title_image, t.title_answer, t.title_analysis
+        FROM mytitle m, title t, user u where m.user_id = u.user_id and m.title_id = t.title_id and u.user_id = #{uid};
+    </select>
+    <resultMap id="selectTitleMap" type="MyTitle">
+        <id property="mid" column="m_id" />
+        <result column="state" property="state" />
+        <!--        关联用户-->
+        <association property="user">
+            <id column="user_id" property="userId"></id>
+        </association>
+        <!--        关联题目-->
+        <association property="title">
+            <id column="title_id" property="titleId"></id>
+            <result column="title_category" property="titleCategory"></result>
+            <result column="title_type" property="titleType"></result>
+            <result column="title_describes" property="titleDescribes"></result>
+            <result column="title_image" property="titleImage"></result>
+            <result column="title_answer" property="titleAnswer"></result>
+            <result column="title_analysis" property="titleAnalysis"></result>
+        </association>
+    </resultMap>
+    
+    <insert id="saveMyTitle">
+        insert into mytitle (user_id, title_id)
+        values (#{user.userId}, #{title.titleId});
+    </insert>
+
+    <update id="updateMyTitle" parameterType="int">
+        update mytitle
+        set state = #{state}
+        where m_id = #{mid}
+    </update>
+    <resultMap id="selectTitleMap1" type="MyTitle">
+        <id property="mid" column="m_id" />
+        <result column="state" property="state" />
+        <!--        关联用户-->
+        <association property="user">
+            <id column="user_id" property="userId"></id>
+        </association>
+        <!--        关联题目-->
+        <association property="title">
+            <id column="title_id" property="titleId"></id>
+            <result column="title_describes" property="titleDescribes"></result>
+            <result column="title_image" property="titleImage"></result>
+            <result column="title_answer" property="titleAnswer"></result>
+            <result column="title_analysis" property="titleAnalysis"></result>
+        </association>
+    </resultMap>
+    <select id="myTitleByClassify" resultMap="selectTitleMap1" parameterType="map">
+        select m.m_id, u.user_id, t.title_id, m.state,
+               t.title_describes, t.title_image, t.title_answer, t.title_analysis
+        FROM mytitle m, title t, user u where m.user_id = u.user_id and m.title_id = t.title_id and u.user_id = #{uid}
+                and t.title_category = #{category} and t.title_type = #{type}
+    </select>
+
+    <select id="completeTitle" resultType="int" parameterType="map">
+        SELECT COUNT(*)
+        FROM mytitle m, title t, user u
+        where m.user_id = u.user_id and m.title_id = t.title_id and u.user_id =#{uid} and t.title_category = #{category} and t.title_type = #{type}
+        and m.state != 0;
+    </select>
+
+
+    <select id="queryAllWrongTitle" parameterType="int" resultMap="selectTitle">
+        SELECT m.m_id, u.user_id, t.title_id,t.title_category, t.title_type,
+               t.title_describes, t.title_image, t.title_answer, t.title_analysis
+        FROM mytitle m, title t, user u
+        where m.user_id = u.user_id and m.title_id = t.title_id and u.user_id =#{uid} and m.state = 2
+    </select>
+    <resultMap id="selectTitle" type="MyTitle">
+        <id property="mid" column="m_id" />
+        <!--        关联用户-->
+        <association property="user">
+            <id column="user_id" property="userId"></id>
+        </association>
+        <!--        关联题目-->
+        <association property="title">
+            <id column="title_id" property="titleId"></id>
+            <result column="title_category" property="titleCategory"></result>
+            <result column="title_type" property="titleType"></result>
+            <result column="title_describes" property="titleDescribes"></result>
+            <result column="title_image" property="titleImage"></result>
+            <result column="title_answer" property="titleAnswer"></result>
+            <result column="title_analysis" property="titleAnalysis"></result>
+        </association>
+    </resultMap>
+</mapper>

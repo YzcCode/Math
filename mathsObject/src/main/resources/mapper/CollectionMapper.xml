@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yzc.mapper.CollectionMapper">
+    <resultMap id="selectTitle" type="CollectionTitle">
+        <id property="collectionId" column="collection_id" />
+        <result column="time" property="time" />
+        <!--        关联用户-->
+        <association property="user">
+            <id column="user_id" property="userId"></id>
+        </association>
+        <!--        关联题目-->
+        <association property="title">
+            <id column="title_id" property="titleId"></id>
+            <result column="title_category" property="titleCategory"></result>
+            <result column="title_type" property="titleType"></result>
+            <result column="title_describes" property="titleDescribes"></result>
+            <result column="title_image" property="titleImage"></result>
+            <result column="title_answer" property="titleAnswer"></result>
+            <result column="title_analysis" property="titleAnalysis"></result>
+        </association>
+    </resultMap>
+
+    <select id="queryAllCollectTitle" resultMap="selectTitle" parameterType="int">
+        SELECT c.collection_id, u.user_id, t.title_id, c.time,t.title_category, t.title_type,
+               t.title_describes, t.title_image, t.title_answer, t.title_analysis
+        FROM collection c, title t, user u
+        where c.user_id = u.user_id and c.title_id = t.title_id and u.user_id =#{uid}
+    </select>
+
+    <insert id="saveTitle">
+        insert into collection(user_id, title_id, time)
+        values (#{user.userId}, #{title.titleId}, #{time});
+    </insert>
+
+    <delete id="deleteTitle" parameterType="int">
+        delete from collection where collection_id = #{cid}
+    </delete>
+
+</mapper>
